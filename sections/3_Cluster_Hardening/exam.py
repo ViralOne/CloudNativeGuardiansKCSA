@@ -21,7 +21,7 @@ class Pregunta:
         opcion_correcta = self.opciones[self.respuesta_correcta - 1]
         # Baraja las opciones
         random.shuffle(self.opciones)
-        # Actualiza el índice de la respuesta correcta
+        # Actualiza el índice de la Correct answer
         self.respuesta_correcta = self.opciones.index(opcion_correcta) + 1
 
 # Preguntas en inglés
@@ -237,13 +237,38 @@ while True:
 random.shuffle(preguntas)
 
 puntaje = 0
+respuestas_incorrectas = []
 
 for pregunta in preguntas:
     pregunta.mostrar_pregunta()
-    respuesta = int(input("Ingrese el número de la opción correcta: "))
+    while True:
+        respuesta_input = input("Enter the number of the correct option.: ").strip()
+        if respuesta_input:
+            try:
+                respuesta = int(respuesta_input)
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+        else:
+            print("No response was entered. Please try again..")
+    
     if pregunta.verificar_respuesta(respuesta):
         puntaje += 1
-    print()  # Añadir un salto de línea después de cada pregunta
+    else:
+        respuestas_incorrectas.append({
+            'pregunta': pregunta.enunciado,
+            'tu_respuesta': pregunta.opciones[respuesta - 1] if 1 <= respuesta <= len(pregunta.opciones) else "Respuesta inválida",
+            'respuesta_correcta': pregunta.opciones[pregunta.respuesta_correcta - 1]
+        })
+    print()
 
-print(f"Tu puntaje final es: {puntaje}/{len(preguntas)} en {idioma_seleccionado}")
+print(f"Your final score is: {puntaje}/{len(preguntas)} en {idioma_seleccionado}")
 
+if respuestas_incorrectas:
+    print("\n" + "="*50)
+    print("INCORRECT ANSWERS:")
+    print("="*50)
+    for i, item in enumerate(respuestas_incorrectas, 1):
+        print(f"\n{i}. {item['pregunta']}")
+        print(f"   Your response: {item['tu_respuesta']}")
+        print(f"   Correct answer: {item['respuesta_correcta']}")
